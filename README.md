@@ -1,3 +1,3 @@
-# SmartSocketStorage
+# SmartSocket
 
-Storage container for SmartSocket pressure sensors.
+Client-facing website and storage solution for the SmartSocket sensor reader.
