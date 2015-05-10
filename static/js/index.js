@@ -11,7 +11,7 @@
             email = element.textContent.replace(" at ", "@");
         }
 
-        element.textContent = email;
+        element.textContent = element.textContent.replace(" at ", "@");
         element.setAttribute("href", "mailto:" + email);
     }
 })();
