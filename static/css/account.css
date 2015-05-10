@@ -1,0 +1,58 @@
+#account {
+    padding: 21px;
+    overflow: hidden;
+    line-height: 154%;
+}
+
+#chart {
+    width: 100%;
+    height: 490px;
+}
+
+#account .left {
+    float: left;
+    width: 70%;
+}
+
+#account .right {
+    float: right;
+    width: 28%;
+}
+
+#legend ul {
+    padding-left: 21px;
+}
+
+#legend li {
+    list-style: none;
+    padding-bottom: 1.4em;
+}
+
+#legend span:not(.info) {
+    position: absolute;
+    display: inline-block;
+    margin-top: 2px;
+    margin-left: -21px;
+    width: 1em;
+    height: 1em;
+    border-radius: 100%;
+    color: #333;
+}
+
+#legend span.info {
+    display: block;
+    padding-top: 3px;
+    color: #777;
+}
+
+
+@media screen and (max-width: 700px), (max-aspect-ratio: 1/1) {
+    #account {
+        text-align: center;
+    }
+    
+    #account .left, #account .right {
+        float: none;
+        width: auto;
+    }
+}

@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="biomedical engineering, capstone, rpi, sockettoyou, socket to you, smartsocket, smart socket" />
+    <meta name="description" content="Hurp durp." />
+
+    <title>SocketToYou.com</title>
+	<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link href="css/index.css" rel="stylesheet" />
+    <link href="css/account.css" rel="stylesheet" />
+</head>
+<body>
+	<header class="centered">
+		<div class="left">
+            <a href="/">
+                <img src="assets/SocketToYou.png" />
+            </a>
+		</div>
+		<div class="right">
+			<a href="/#smart-socket">Smart Socket</a>
+			<a href="/#purpose">Purpose</a>
+			<a href="/#about-us">About Us</a>
+		</div>
+	</header>
+    
+    <section id="account" class="centered">
+        <div class="right">
+            <h3>Pressure over time</h3>
+            <div id="legend"></div>
+        </div>
+        <div class="left">
+            <canvas id="chart"></canvas>
+        </div>
+    </section>
+	
+	<footer>
+		<p class="centered">
+			<a class="left" href="http://rpi.edu/">
+				<img src="assets/RPI.jpg"/>
+			</a>
+			<a class="left" href="http://bme.rpi.edu/">
+				<img src="assets/BME.png"/>
+			</a>
+            <span id="blurb">
+                Project sponsored by Dr. Justin Kane and the Biomedical Engineering Department of Rensselaer Polytechnic Institute.
+                <br /><br />
+                Questions? Contact <span class="email">contact at sockettoyou.com</span>.
+            </span>
+		</p>
+		<span></span>
+	</footer>
+	
+    <script src="js/chart.min.js"></script>
+    <script src="js/account.js"></script>
+</body>
+
+</html>
