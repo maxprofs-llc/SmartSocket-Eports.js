@@ -1,0 +1,6 @@
+{
+    "name": "SmartSocketStorage",
+    "description": "Storage container for SmartSocket pressure sensors.",
+    "repository": "https://github.com/SocketToYou/SmartSocketStorage",
+    "keywords": [ "smart socket", "socket to you", "biomedical engineering", "limbs" ]
+}
