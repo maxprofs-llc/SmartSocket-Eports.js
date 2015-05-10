@@ -3,7 +3,8 @@
 process.env.PWD = process.cwd()
 
 var express = require("express"),
-    pluralize = require("pluralize"),
+    mongodb = require("mongodb"),
+    bodyParser = require('body-parser'),
     app = express(),
     indexOptions = {
         "root": __dirname + "/static/",
@@ -17,8 +18,21 @@ var express = require("express"),
 app.set("port", (process.env.PORT || 5000));
 app.use(express.static(process.env.PWD + "/static"));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+// When the users posts info, 
 app.post("/api", function (request, response) {
-    response.end("Posted!");
+    var body = request.body,
+        timestamp = request.timestamp,
+        pressure = request.pressure,
+        user = request.user,
+        socket = request.socket;
+
+    request.setEncoding("UTF-8");
+    response.end("Posted!\r\n" + JSON.stringify(request.body));
 });
 
 app.get("/api", function (request, response) {

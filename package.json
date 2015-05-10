@@ -8,8 +8,8 @@
     },
     "dependencies": {
         "express": "~4.9.X",
-        "pluralize": "~1.1.X",
-        "mongodb": "~2.0.X"
+        "mongodb": "~2.0.X",
+        "body-parser": "~1.12.X"
     },
     "engines": {
         "node": "0.12.X"
