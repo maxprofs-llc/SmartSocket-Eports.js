@@ -1,0 +1,23 @@
+{
+    "name": "SmartSocketStorage",
+    "version": "0.0.0",
+    "description": "Storage container for SmartSocket pressure sensors.",
+    "main": "main.js",
+    "scripts": {
+        "start": "node main.js"
+    },
+    "dependencies": {
+        "express": "~4.9.X",
+        "pluralize": "~1.1.X",
+        "mongodb": "~2.0.X"
+    },
+    "engines": {
+        "node": "0.12.X"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SocketToYou/SmartSocketStorage"
+    },
+    "keywords": [ "smart socket", "socket to you", "biomedical engineering", "limbs" ],
+    "license": "MIT"
+}
