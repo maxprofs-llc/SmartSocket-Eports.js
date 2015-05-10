@@ -1,3 +1,7 @@
+// Fix for Heroku and __dirname 
+// http://stackoverflow.com/questions/17212624/deploy-nodejs-on-heroku-fails-serving-static-files-located-in-subfolders
+process.env.PWD = process.cwd()
+
 var express = require("express"),
     pluralize = require("pluralize"),
     app = express(),
@@ -11,7 +15,7 @@ var express = require("express"),
     };
 
 app.set("port", (process.env.PORT || 5000));
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(process.env.PWD + "/static"));
 
 app.post("/api", function (request, response) {
     response.end("Posted!");
