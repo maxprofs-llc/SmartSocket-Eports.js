@@ -1,8 +1,8 @@
 (function (settings) {
-    var refreshRate = settings.refreshRate,
-        numSockets = settings.numSockets,
+    var numSockets = settings.numSockets,
         periodConversions = settings.periodConversions,
-        theme = settings.theme;
+        theme = settings.theme,
+        refreshRate, pingTimeout;
 
     /**
      * 
@@ -227,6 +227,10 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
+        refreshRate = periodConversions[period];
+        clearTimeout(pingTimeout);
+        setTimeout(startPingingData, refreshRate);
+
         if (silent !== true) {
             document.getElementById("chartArea").className = "loading";
             document.getElementById("loader").className = "loading";
@@ -261,6 +265,15 @@
         });
     }
 
+    /**
+     * 
+     */
+    function startPingingData() {
+        conglomerateData(true);
+
+        pingTimeout = setTimeout(startPingingData, refreshRate);
+    }
+
     var elements = document.querySelectorAll("#chooser input, #chooser select"),
         i;
 
@@ -272,13 +285,9 @@
 
     Chart.defaults.global.animation = false;
     Chart.defaults.global.responsive = true;
-    conglomerateData();
 
-    setInterval(function () {
-        conglomerateData(true);
-    }, refreshRate);
+    startPingingData();
 })({
-    "refreshRate": 1000,
     "numSockets": 7,
     "periodConversions": {
         "seconds": 1000,
