@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// POST requests: add the record in storage
+// POST /: add the record in storage
 app.post("/api", function (request, response) {
     if (!storage.initialized) {
         response.end("Try again later!");
@@ -42,22 +42,37 @@ app.post("/api", function (request, response) {
     });
 });
 
-// GET requests: retrieve EVERYTHING (for now)
-app.get("/api", function (request, response) {
+// GET api[/key/value...]: retrieve records where key equals value
+// E.x. /api: retrieve everything
+// E.x. /api/socket/eq/1: retrieve records where socket = 1
+// E.x. /api/socket/gt/1/user/eq/5: where socket is > 1 and user = 5
+app.get("/api*", function (request, response) {
     if (!storage.initialized) {
         response.end("Try again later!");
         return;
     }
+    
+    var queryRaw = request.params[0],
+        querySplit = queryRaw.split("/"),
+        filters = {},
+        filter, i;
 
-    storage.findAll(function (error, users) {
+    for (i = 1; i < querySplit.length - 2; i += 3) {
+        filter = {};
+        filter["$" + querySplit[i + 1]] = querySplit[i + 2];
+
+        filters[querySplit[i]] = filter;
+    }
+
+    storage.findRecords(filters, function (error, records) {
         if (error) {
-            response.end("There was an error.");
+            response.end("There was an error (" + error.name + "). " + error.$err);
             storage.log(error);
             return;
         }
 
-        response.end(JSON.stringify(users));
-    })
+        response.end(JSON.stringify(records));
+    });
 });
 
 // Redirect everything else to the /static/ dir (because of indexOptions)

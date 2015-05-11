@@ -62,26 +62,22 @@ SocketStorage.prototype.getCollection = function (collectionName, callback) {
     });
 };
 
-SocketStorage.prototype.findAll = function (callback) {
+SocketStorage.prototype.findRecords = function (filter, callback) {
     var scope = this;
 
-    this.log("Finding all.");
-
     this.getCollection("records", function (error, collection) {
-        scope.log("Got collection");
-        scope.log("Callback is", callback);
         if (error) {
-            scope.log("Error", error);
+            scope.log("Error in findRecords > getCollection", error);
             callback(error);
             return;
         }
 
-        collection.find().toArray(function (error, results) {
+        collection.find(filter).toArray(function (error, results) {
             if (error) {
-                callback(error);
-            } else {
-                callback(null, results);
+                scope.log("Error in findAll > getCollection > toArray", error);
             }
+
+            callback(error, results);
         });
     });
 };
