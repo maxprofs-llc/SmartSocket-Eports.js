@@ -257,6 +257,10 @@ header {
     color: #969696;
 }
 
+#content p img.full {
+    max-width: 100%;
+}
+
 #content p img:not(.full) {
     width: 210px;
 }
