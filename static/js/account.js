@@ -1,5 +1,6 @@
 (function (settings) {
-    var numSockets = settings.numSockets,
+    var refreshRate = settings.refreshRate,
+        numSockets = settings.numSockets,
         periodConversions = settings.periodConversions,
         theme = settings.theme;
 
@@ -202,7 +203,16 @@
         return labels;
     }
 
-    function conglomerateData() {
+    /**
+     * Driver Function to request an updated listing of records from the api,
+     * conglomerate them into averaged timestamped groups, and display them on
+     * the chart.
+     * 
+     * @param {Boolean} [silent]   Whether to skip adding the "loading" class to
+     *                             the chart and loader areas (so to make it
+     *                             appear to work in the background).
+     */
+    function conglomerateData(silent) {
         var amount = Number(document.getElementById("chooseAmount").value),
             period = document.getElementById("choosePeriod").value,
             labels = [
@@ -210,8 +220,10 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
-        document.getElementById("chartArea").className = "loading";
-        document.getElementById("loader").className = "loading";
+        if (!silent) {
+            document.getElementById("chartArea").className = "loading";
+            document.getElementById("loader").className = "loading";
+        }
 
         startLoadingRecords(function (recordGroups) {
             var canvas = document.getElementById("chart"),
@@ -254,7 +266,12 @@
     Chart.defaults.global.animation = false;
     Chart.defaults.global.responsive = true;
     conglomerateData();
+
+    setInterval(function () {
+        conglomerateData(true);
+    }, refreshRate);
 })({
+    "refreshRate": 3500,
     "numSockets": 7,
     "periodConversions": {
         "seconds": 1000,
