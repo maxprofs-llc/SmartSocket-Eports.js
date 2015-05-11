@@ -103,6 +103,15 @@ SocketStorage.prototype.addRecord = function (record, callback) {
     callback();
 };
 
+SocketStorage.prototype.dropDatabase = function (callback) {
+    try {
+        this.db.dropDatabase();
+        callback();
+    } catch (error) {
+        callback(error);
+    }
+};
+
 SocketStorage.prototype.log = function () {
     if (!this.settings.verbose) {
         return;
