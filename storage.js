@@ -91,6 +91,12 @@ SocketStorage.prototype.addRecord = function (record, callback) {
             return;
         }
 
+        // Ensure numeric fields are indeed numeric
+        record.timestamp = Number(record.timestamp);
+        record.user = Number(record.user);
+        record.socket = Number(record.socket);
+        record.pressure = Number(record.pressure);
+
         scope.log("Inserting", record);
         collection.insert(record);
     });

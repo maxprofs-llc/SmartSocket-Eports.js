@@ -106,6 +106,10 @@ header {
 
     header a {
         cursor: pointer;
+        -moz-transition: 117ms color;
+        -o-transition: 117ms color;
+        -webkit-transition: 117ms color;
+        transition: 117ms color;
     }
 
     header .right a {

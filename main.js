@@ -42,7 +42,7 @@ app.post("/api", function (request, response) {
     });
 });
 
-// GET api[/key/value...]: retrieve records where key equals value
+// GET api[/key/operator/value...]: retrieve records where key (operator) value
 // E.x. /api: retrieve everything
 // E.x. /api/socket/eq/1: retrieve records where socket = 1
 // E.x. /api/socket/gt/1/user/eq/5: where socket is > 1 and user = 5
