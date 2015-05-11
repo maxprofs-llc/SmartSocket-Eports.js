@@ -7,6 +7,13 @@
     /**
      * 
      */
+    function obtainTimestamp() {
+        return new Date().getTime();
+    }
+
+    /**
+     * 
+     */
     function setLegend(chart, datasets) {
         var legendElement = document.getElementById("legend"),
             legendHTML = chart.generateLegend(),
@@ -114,7 +121,7 @@
         var amount = Number(document.getElementById("chooseAmount").value),
             periodString = document.getElementById("choosePeriod").value,
             periodMilliseconds = periodConversions[periodString] * amount,
-            timeMinimum = new Date().getTime() - periodMilliseconds;
+            timeMinimum = obtainTimestamp() - periodMilliseconds;
 
         requestAllRecords(timeMinimum, function (requests) {
             callback(requests.map(function (request) {
@@ -137,7 +144,7 @@
     function groupRecords(amount, period, records) {
         var dates = [],
             grouped = [],
-            now = new Date().getTime(),
+            now = obtainTimestamp(),
             record, i, j;
 
         for (i = 0; i < amount; i += 1) {
@@ -220,7 +227,7 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
-        if (!silent) {
+        if (silent !== true) {
             document.getElementById("chartArea").className = "loading";
             document.getElementById("loader").className = "loading";
         }
