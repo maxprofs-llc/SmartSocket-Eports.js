@@ -30,13 +30,13 @@
     <section id="account" class="centered">
         <div id="chooser">
             <span>show the last</span>
-            <select id="chooseAmount">
+            <select id="chooseAmount" class="fonted">
                 <option selected>5</option>
                 <option>10</option>
                 <option>25</option>
                 <option>50</option>
             </select>
-            <select id="choosePeriod">
+            <select id="choosePeriod" class="fonted">
                 <option>seconds</option>
                 <option selected>minutes</option>
                 <option>hours</option>
@@ -47,15 +47,18 @@
                 <option>years</option>
                 -->
             </select>
+            <input id="refresher" class="fonted" type="button" value="refresh" />
             <hr />
         </div>
 
-        <div class="right">
-            <h3>Pressure over time</h3>
-            <div id="legend"></div>
-        </div>
-        <div class="left">
-            <canvas id="chart"></canvas>
+        <div id="chartArea">
+            <div class="right">
+                <h3>Pressure over time</h3>
+                <div id="legend"></div>
+            </div>
+            <div class="left">
+                <canvas id="chart"></canvas>
+            </div>
         </div>
     </section>
 

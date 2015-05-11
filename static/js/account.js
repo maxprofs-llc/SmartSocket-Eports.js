@@ -122,6 +122,7 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
+        document.getElementById("chartArea").className = "loading";
 
         startLoadingRecords(function (records) {
             var canvas = document.getElementById("chart"),
@@ -163,19 +164,22 @@
                 chart = new Chart(context).Line(data);
 
             setLegend(chart, data.datasets);
+            document.getElementById("chartArea").className = "";
         });
     }
 
     var elements = document.querySelectorAll("#chooser input, #chooser select"),
         i;
 
-    Chart.defaults.global.animation = false;
-    Chart.defaults.global.responsive = true;
-    conglomerateData();
-
     for (i = 0; i < elements.length; i += 1) {
         elements[i].onchange = conglomerateData;
     }
+
+    document.getElementById("refresher").onclick = conglomerateData;
+
+    Chart.defaults.global.animation = false;
+    Chart.defaults.global.responsive = true;
+    conglomerateData();
 })({
     "strokeColors": [
         "rgb(210, 70, 70)",

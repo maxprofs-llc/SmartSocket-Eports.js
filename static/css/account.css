@@ -4,10 +4,17 @@
     line-height: 154%;
 }
 
-#chart {
-    width: 100%;
-    height: 490px;
+#chartArea {
+    overflow: hidden;
+    -moz-transition: 350ms opacity;
+    -o-transition: 350ms opacity;
+    -webkit-transition: 350ms opacity;
+    transition: 350ms opacity;
 }
+
+    #chartArea.loading {
+        opacity: 0;
+    }
 
 #account .left {
     float: left;
@@ -19,6 +26,11 @@
     width: 28%;
 }
 
+#chart {
+    width: 100%;
+    height: 490px;
+}
+
 
 /* Chooser */
 
@@ -27,25 +39,36 @@
     text-align: center;
 }
 
-#chooser span, #chooser input, #chooser select {
-    color: #494949;
-    border: 0;
-}
+    #chooser span, #chooser input, #chooser select {
+        color: #494949;
+        border: 0;
+    }
 
-#chooser span {
-    padding-right: .49em;
-    font-size: 1.4em;
-    font-style: italic;
-}
+    #chooser span {
+        padding-right: .49em;
+        font-size: 1.4em;
+        font-style: italic;
+    }
 
-#chooser input, #chooser select {
-    font-size: 2.1em;
-}
+    #chooser input, #chooser select {
+        font-size: 2.1em;
+    }
 
-#chooser input[type=number] {
-    width: 3.5em;
-    text-align: center;
-}
+        #chooser input[type=number] {
+            width: 3.5em;
+            text-align: center;
+        }
+
+    #chooser #refresher {
+        margin-left: 14px;
+        background: white;
+        border-radius: 7px;
+        border: 1px solid #00ff77;
+        color: #aaa;
+        font-style: italic;
+        font-size: 100%;
+        cursor: pointer;
+    }
 
 
 /* Legend */
@@ -81,9 +104,9 @@
     #account {
         text-align: center;
     }
-    
-    #account .left, #account .right {
-        float: none;
-        width: auto;
-    }
+
+        #account .left, #account .right {
+            float: none;
+            width: auto;
+        }
 }
