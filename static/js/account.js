@@ -1,4 +1,4 @@
-(function () {
+(function (theme) {
     function setLegend(chart, datasets) {
         var legendElement = document.getElementById("legend"),
             legendHTML = chart.generateLegend(),
@@ -12,10 +12,7 @@
             data = datasets[i].data;
 
             info.className = "info";
-            info.innerHTML = [
-                "Currently " + (Math.round(data[data.length - 1] * 10) / 10) + " Newtons.",
-                "No urgent action required."
-            ].join("<br />");
+            info.innerHTML = "Currently " + (Math.round(data[data.length - 1] * 10) / 10) + " Newtons.";
 
             legendChildren[i].appendChild(info);
         }
@@ -42,7 +39,8 @@
             status = {
                 "ajax": ajax,
                 "completed": false
-            }
+            };
+
         ajax.open("GET", generateQuery({
             "user": [
                 ["eq", 1]
@@ -88,7 +86,7 @@
         return requests;
     }
 
-    function startLoadingRecords() {
+    function startLoadingRecords(callback) {
         var amount = Number(document.getElementById("chooseAmount").value),
             periodString = document.getElementById("choosePeriod").value,
             periodMilliseconds = {
@@ -104,58 +102,97 @@
         // Hardcoded to 7 sockets, because Mariah said so.
         requestAllRecords(7, timeMinimum, function (requests) {
             var results = requests.map(function (request) {
-                return JSON.parse(request.ajax.responseText);/*.map(function (data) {
-                    
-                });*/
+                return JSON.parse(request.ajax.responseText);
             });
 
-            console.log("Results", results);
+            // Sort in order of timestamp - greater later
+            results.sort(function (a, b) {
+                return b.timestamp - a.timestamp;
+            });
+
+            callback(results);
         });
     }
 
+    function conglomerateData() {
+        var amount = Number(document.getElementById("chooseAmount").value),
+            period = document.getElementById("choosePeriod").value,
+            labels = [
+                "just now",
+                "1 " + period.substr(0, period.length - 1) + " ago"
+            ];
+
+
+        startLoadingRecords(function (records) {
+            var canvas = document.getElementById("chart"),
+                context = canvas.getContext("2d"),
+                data = {
+                    "labels": (function () {
+                        for (var i = 2; i < amount; i += 1) {
+                            labels.push("-" + i + " " + period + " ago");
+                        }
+
+                        labels.reverse();
+
+                        return labels;
+                    })(),
+                    "datasets": records.map(function (record, i) {
+                        return {
+                            "label": "Socket " + i,
+                            "fillColor": "rgba(0,0,0,0)",
+                            "strokeColor": theme.strokeColors[i],
+                            "pointColor": theme.pointColors[i],
+                            "pointStrokeColor": "#fff",
+                            "pointHighlightFill": "#fff",
+                            "pointHighlightStroke": "rgba(220,220,220,1)",
+                            "data": (function () {
+                                var data = [],
+                                    j;
+
+                                for (j = 0; j < amount; j += 1) {
+                                    data.push((j + 4) * Math.random() - 2);
+                                }
+
+                                data.sort();
+
+                                return data;
+                            })()
+                        }
+                    })
+                },
+                chart = new Chart(context).Line(data);
+
+            setLegend(chart, data.datasets);
+        });
+    }
+
+    var elements = document.querySelectorAll("#chooser input, #chooser select"),
+        i;
+
+    Chart.defaults.global.animation = false;
     Chart.defaults.global.responsive = true;
+    conglomerateData();
 
-    startLoadingRecords();
-
-    //(function (data) {
-    //    var canvas = document.getElementById("chart"),
-    //        context = canvas.getContext("2d"),
-    //        chart = new Chart(context).Line(data);
-
-    //    setLegend(chart, data.datasets);
-    //})({
-    //    "labels": ["January", "February", "March", "April", "May", "June", "July"],
-    //    "datasets": [
-    //        {
-    //            label: "Leg (Left) - Center Point",
-    //            fillColor: "rgba(0,0,0,0)",
-    //            strokeColor: "rgba(140,175,117,1)",
-    //            pointColor: "rgba(175,210,140,1)",
-    //            pointStrokeColor: "#fff",
-    //            pointHighlightFill: "#fff",
-    //            pointHighlightStroke: "rgba(220,220,220,1)",
-    //            data: randomPoints(7, 35, 56)
-    //        },
-    //        {
-    //            label: "Leg (Left) - Right Point",
-    //            fillColor: "rgba(0,0,0,0)",
-    //            strokeColor: "rgba(175,117,140,1)",
-    //            pointColor: "rgba(210,140,175,1)",
-    //            pointStrokeColor: "#fff",
-    //            pointHighlightFill: "#fff",
-    //            pointHighlightStroke: "rgba(220,220,220,1)",
-    //            data: randomPoints(7, 14, 42)
-    //        },
-    //        {
-    //            label: "Leg (Left) - Right Point",
-    //            fillColor: "rgba(0,0,0,0)",
-    //            strokeColor: "rgba(117,140,175,1)",
-    //            pointColor: "rgba(140,175,210,1)",
-    //            pointStrokeColor: "#fff",
-    //            pointHighlightFill: "#fff",
-    //            pointHighlightStroke: "rgba(220,220,220,1)",
-    //            data: randomPoints(7, 28, 35)
-    //        }
-    //    ]
-    //});
-})();
+    for (i = 0; i < elements.length; i += 1) {
+        elements[i].onchange = conglomerateData;
+    }
+})({
+    "strokeColors": [
+        "rgb(210, 70, 70)",
+        "rgb(210, 140, 70)",
+        "rgb(210, 210, 70)",
+        "rgb(70, 140, 70)",
+        "rgb(70, 70, 140)",
+        "rgb(140, 70, 140)",
+        "rgb(210, 175, 189)"
+    ],
+    "pointColors": [
+        "rgb(245, 117, 117)",
+        "rgb(245, 175, 117)",
+        "rgb(245, 245, 117)",
+        "rgb(117, 175, 117)",
+        "rgb(117, 117, 175)",
+        "rgb(175, 117, 175)",
+        "rgb(245, 210, 224)"
+    ]
+});

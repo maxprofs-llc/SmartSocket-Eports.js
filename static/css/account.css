@@ -2,7 +2,6 @@
     padding: 21px;
     overflow: hidden;
     line-height: 154%;
-    text-align: center;
 }
 
 #chart {
@@ -25,6 +24,7 @@
 
 #chooser {
     color: #333;
+    text-align: center;
 }
 
 #chooser span, #chooser input, #chooser select {
@@ -56,7 +56,7 @@
 
 #legend li {
     list-style: none;
-    padding-bottom: 1.4em;
+    padding-bottom: .7em;
 }
 
 #legend span:not(.info) {
