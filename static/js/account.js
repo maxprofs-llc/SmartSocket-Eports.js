@@ -1,4 +1,8 @@
-(function (theme) {
+(function (settings) {
+    var numSockets = settings.numSockets,
+        periodConversions = settings.periodConversions,
+        theme = settings.theme;
+
     function setLegend(chart, datasets) {
         var legendElement = document.getElementById("legend"),
             legendHTML = chart.generateLegend(),
@@ -89,12 +93,7 @@
     function startLoadingRecords(callback) {
         var amount = Number(document.getElementById("chooseAmount").value),
             periodString = document.getElementById("choosePeriod").value,
-            periodMilliseconds = {
-                "seconds": 1000,
-                "minutes": 60000,
-                "hours": 3600000,
-                "days": 86400000
-            }[periodString] * amount,
+            periodMilliseconds = periodConversions[periodString] * amount,
             timeMinimum = new Date().getTime() - periodMilliseconds;
 
         console.log("k", amount, periodString, periodMilliseconds, timeMinimum);
@@ -114,6 +113,52 @@
         });
     }
 
+    // Dates are the -X * i places in time (milliseconds / Unix stamps)
+    function groupRecords(amount, period, records) {
+        var dates = [],
+            grouped = [],
+            now = new Date().getTime(),
+            record, i, j;
+
+        for (i = 0; i < amount; i += 1) {
+            dates.push(now - i * period);
+            grouped.push([]);
+        }
+
+        dates.reverse();
+
+        for (i = 0; i < records.length; i += 1) {
+            record = records[i];
+
+            // Find the first date that's after the timestamp: add it there
+            for (j = 0; j < amount - 1; j += 1) {
+                if (dates[j] > record.timestamp) {
+                    break;
+                }
+            }
+
+            grouped[j].push(record);
+        }
+
+        return grouped.map(function (group) {
+            if (group.length === 0) {
+                return 0;
+            }
+
+            var total = 0,
+                i;
+
+            for (i = 0; i < group.length; i += 1) {
+                total += group[i].pressure;
+            }
+
+            return total / group.length;
+        });
+
+        // return grouped mapped so each sub array becomes average pressure
+        return output;
+    }
+
     function conglomerateData() {
         var amount = Number(document.getElementById("chooseAmount").value),
             period = document.getElementById("choosePeriod").value,
@@ -125,9 +170,12 @@
         document.getElementById("chartArea").className = "loading";
         document.getElementById("loader").className = "loading";
 
-        startLoadingRecords(function (records) {
+        startLoadingRecords(function (recordGroups) {
             var canvas = document.getElementById("chart"),
                 context = canvas.getContext("2d"),
+                records = recordGroups.map(function (recordGroup) {
+                    return groupRecords(amount, periodConversions[period], recordGroup);
+                }),
                 data = {
                     "labels": (function () {
                         for (var i = 2; i < amount; i += 1) {
@@ -147,18 +195,7 @@
                             "pointStrokeColor": "#fff",
                             "pointHighlightFill": "#fff",
                             "pointHighlightStroke": "rgba(220,220,220,1)",
-                            "data": (function () {
-                                var data = [],
-                                    j;
-
-                                for (j = 0; j < amount; j += 1) {
-                                    data.push((j + 4) * Math.random() - 2);
-                                }
-
-                                data.sort();
-
-                                return data;
-                            })()
+                            "data": records[i]
                         }
                     })
                 },
@@ -183,22 +220,31 @@
     Chart.defaults.global.responsive = true;
     conglomerateData();
 })({
-    "strokeColors": [
-        "rgb(210, 70, 70)",
-        "rgb(210, 140, 70)",
-        "rgb(210, 210, 70)",
-        "rgb(70, 140, 70)",
-        "rgb(70, 70, 140)",
-        "rgb(140, 70, 140)",
-        "rgb(210, 175, 189)"
-    ],
-    "pointColors": [
-        "rgb(245, 117, 117)",
-        "rgb(245, 175, 117)",
-        "rgb(245, 245, 117)",
-        "rgb(117, 175, 117)",
-        "rgb(117, 117, 175)",
-        "rgb(175, 117, 175)",
-        "rgb(245, 210, 224)"
-    ]
+    "numSockets": 7,
+    "periodConversions": {
+        "seconds": 1000,
+        "minutes": 60000,
+        "hours": 3600000,
+        "days": 86400000
+    },
+    "theme": {
+        "strokeColors": [
+            "rgb(210, 70, 70)",
+            "rgb(210, 140, 70)",
+            "rgb(210, 210, 70)",
+            "rgb(70, 140, 70)",
+            "rgb(70, 70, 140)",
+            "rgb(140, 70, 140)",
+            "rgb(210, 175, 189)"
+        ],
+        "pointColors": [
+            "rgb(245, 117, 117)",
+            "rgb(245, 175, 117)",
+            "rgb(245, 245, 117)",
+            "rgb(117, 175, 117)",
+            "rgb(117, 117, 175)",
+            "rgb(175, 117, 175)",
+            "rgb(245, 210, 224)"
+        ]
+    }
 });
