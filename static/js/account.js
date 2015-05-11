@@ -3,6 +3,9 @@
         periodConversions = settings.periodConversions,
         theme = settings.theme;
 
+    /**
+     * 
+     */
     function setLegend(chart, datasets) {
         var legendElement = document.getElementById("legend"),
             legendHTML = chart.generateLegend(),
@@ -22,6 +25,9 @@
         }
     }
 
+    /**
+     * 
+     */
     function generateQuery(filterGroups) {
         var query = window.location.origin + "/api",
             filterGroup, filter, i, j;
@@ -38,6 +44,9 @@
         return query;
     }
 
+    /**
+     * 
+     */
     function requestSocketRecords(socket, timeMinimum, callback) {
         var ajax = new XMLHttpRequest(),
             status = {
@@ -73,7 +82,10 @@
         return status;
     }
 
-    function requestAllRecords(numSockets, timeMinimum, callback) {
+    /**
+     * 
+     */
+    function requestAllRecords(timeMinimum, callback) {
         var requests = new Array(),
             numCompleted = 0,
             i;
@@ -90,30 +102,37 @@
         return requests;
     }
 
+    /**
+     * Sends a number of requests for socket records (1 for each socket), 
+     * filtered on the HTML selects for amount and period. 
+     * 
+     * @param {Function} callback   A callback to call on an Array of results
+     *                              once they return.
+     */
     function startLoadingRecords(callback) {
         var amount = Number(document.getElementById("chooseAmount").value),
             periodString = document.getElementById("choosePeriod").value,
             periodMilliseconds = periodConversions[periodString] * amount,
             timeMinimum = new Date().getTime() - periodMilliseconds;
 
-        console.log("k", amount, periodString, periodMilliseconds, timeMinimum);
-
-        // Hardcoded to 7 sockets, because Mariah said so.
-        requestAllRecords(7, timeMinimum, function (requests) {
-            var results = requests.map(function (request) {
+        requestAllRecords(timeMinimum, function (requests) {
+            callback(requests.map(function (request) {
                 return JSON.parse(request.ajax.responseText);
-            });
-
-            // Sort in order of timestamp - greater later
-            results.sort(function (a, b) {
-                return b.timestamp - a.timestamp;
-            });
-
-            callback(results);
+            }));
         });
     }
 
     // Dates are the -X * i places in time (milliseconds / Unix stamps)
+    /**
+     * Turns a bunch of records into a Number[] that can be displayed as a line
+     * on the chart by grouping them into their closest date, then averaging
+     * those groups.
+     * 
+     * @param {Number} amount   How many points there should be on the line.
+     * @param {Number} period   How many milliseconds between each point.
+     * @param {Record[]} records   Records obtained from /api.
+     * @return {Number[]} Records grouped and averaged into a chartable line.
+     */
     function groupRecords(amount, period, records) {
         var dates = [],
             grouped = [],
@@ -159,6 +178,30 @@
         return output;
     }
 
+    /**
+     * 
+     */
+    function populateLabels(labels, amount, period) {
+        var skipper = Math.ceil(amount / 25),
+            i, j;
+
+        for (i = 2; i < amount; i += skipper) {
+            labels.push("-" + i + " " + period + " ago");
+            for (j = 1; j < skipper; j += 1) {
+                labels.push("");
+            }
+        }
+
+        if (skipper > 3) {
+            labels[1] = "";
+            labels[2] = "";
+        }
+
+        labels.reverse();
+
+        return labels;
+    }
+
     function conglomerateData() {
         var amount = Number(document.getElementById("chooseAmount").value),
             period = document.getElementById("choosePeriod").value,
@@ -177,15 +220,7 @@
                     return groupRecords(amount, periodConversions[period], recordGroup);
                 }),
                 data = {
-                    "labels": (function () {
-                        for (var i = 2; i < amount; i += 1) {
-                            labels.push("-" + i + " " + period + " ago");
-                        }
-
-                        labels.reverse();
-
-                        return labels;
-                    })(),
+                    "labels": populateLabels(labels, amount, period),
                     "datasets": records.map(function (record, i) {
                         return {
                             "label": "Socket " + i,
