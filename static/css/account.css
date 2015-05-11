@@ -1,4 +1,5 @@
 #account {
+    position: relative;
     padding: 21px;
     overflow: hidden;
     line-height: 154%;
@@ -14,6 +15,27 @@
 
     #chartArea.loading {
         opacity: 0;
+    }
+
+
+#loader {
+    position: absolute;
+    margin-top: 210px;
+    width: 100%;
+    color: #eee;
+    font-size: 4.9em;
+    font-style: italic;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    -moz-transition: 117ms opacity;
+    -o-transition: 117ms opacity;
+    -webkit-transition: 117ms opacity;
+    transition: 117ms opacity;
+}
+
+    #loader.loading {
+        opacity: 1;
     }
 
 #account .left {

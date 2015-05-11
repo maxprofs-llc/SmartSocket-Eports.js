@@ -123,6 +123,7 @@
             ];
 
         document.getElementById("chartArea").className = "loading";
+        document.getElementById("loader").className = "loading";
 
         startLoadingRecords(function (records) {
             var canvas = document.getElementById("chart"),
@@ -165,6 +166,7 @@
 
             setLegend(chart, data.datasets);
             document.getElementById("chartArea").className = "";
+            document.getElementById("loader").className = "";
         });
     }
 
