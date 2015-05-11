@@ -278,7 +278,7 @@
         conglomerateData(true);
     }, refreshRate);
 })({
-    "refreshRate": 3500,
+    "refreshRate": 1000,
     "numSockets": 7,
     "periodConversions": {
         "seconds": 1000,
