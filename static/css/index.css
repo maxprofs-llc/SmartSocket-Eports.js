@@ -289,9 +289,18 @@ header {
 /* Footer */
 
 footer {
-    background: #4bc89b;
+    position: relative;
+    background: #718481;
     padding: 70px 21px 49px 21px;
 }
+
+    footer #footborder {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 7px;
+    }
 
     footer p {
         overflow: hidden;
@@ -316,7 +325,7 @@ footer {
     }
 
     footer #blurb {
-        color: #d2f0e8;
+        color: #e0eae7;
     }
 
     footer a:hover {
