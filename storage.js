@@ -62,8 +62,10 @@ SocketStorage.prototype.getCollection = function (collectionName, callback) {
     });
 };
 
-SocketStorage.prototype.findRecords = function (filter, callback) {
+SocketStorage.prototype.findRecords = function (filters, callback) {
     var scope = this;
+
+    scope.ensureNumericFilters(filters);
 
     this.getCollection("records", function (error, collection) {
         if (error) {
@@ -72,7 +74,7 @@ SocketStorage.prototype.findRecords = function (filter, callback) {
             return;
         }
 
-        collection.find(filter).toArray(function (error, results) {
+        collection.find(filters).toArray(function (error, results) {
             if (error) {
                 scope.log("Error in findAll > getCollection > toArray", error);
             }
@@ -92,10 +94,7 @@ SocketStorage.prototype.addRecord = function (record, callback) {
         }
 
         // Ensure numeric fields are indeed numeric
-        record.timestamp = Number(record.timestamp);
-        record.user = Number(record.user);
-        record.socket = Number(record.socket);
-        record.pressure = Number(record.pressure);
+        scope.ensureNumericRecord(record);
 
         scope.log("Inserting", record);
         collection.insert(record);
@@ -111,6 +110,26 @@ SocketStorage.prototype.dropDatabase = function (callback) {
         callback(error);
     }
 };
+
+SocketStorage.prototype.ensureNumericRecord = function (record) {
+    record.timestamp = Number(record.timestamp);
+    record.user = Number(record.user);
+    record.socket = Number(record.socket);
+    record.pressure = Number(record.pressure);
+}
+
+SocketStorage.prototype.ensureNumericFilters = function (filters) {
+    var filter,
+        i, j;
+
+    for (i in filters) {
+        filter = filters[i];
+
+        for (j in filter) {
+            filter[j] = Number(filter[j]);
+        }
+    }
+}
 
 SocketStorage.prototype.log = function () {
     if (!this.settings.verbose) {
