@@ -4,7 +4,10 @@ process.env.PWD = process.cwd()
 
 var express = require("express"),
     mongodb = require("mongodb"),
-    bodyParser = require('body-parser'),
+    bodyParser = require("body-parser"),
+    storage = new (require("./storage.js").SocketStorage)({
+        "verbose": true
+    }),
     app = express(),
     indexOptions = {
         "root": __dirname + "/static/",
@@ -23,20 +26,38 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// When the users posts info, 
+// POST requests: add the record in storage
 app.post("/api", function (request, response) {
-    var body = request.body,
-        timestamp = request.timestamp,
-        pressure = request.pressure,
-        user = request.user,
-        socket = request.socket;
+    if (!storage.initialized) {
+        response.end("Try again later!");
+    }
 
-    request.setEncoding("UTF-8");
-    response.end("Posted!\r\n" + JSON.stringify(request.body));
+    storage.addRecord(request.body, function (error) {
+        if (error) {
+            response.end("There was an error.");
+            storage.log(error);
+        } else {
+            response.end("ACK");
+        }
+    });
 });
 
+// GET requests: retrieve EVERYTHING (for now)
 app.get("/api", function (request, response) {
-    response.end("Gotten!");
+    if (!storage.initialized) {
+        response.end("Try again later!");
+        return;
+    }
+
+    storage.findAll(function (error, users) {
+        if (error) {
+            response.end("There was an error.");
+            storage.log(error);
+            return;
+        }
+
+        response.end(JSON.stringify(users));
+    })
 });
 
 // Redirect everything else to the /static/ dir (because of indexOptions)
