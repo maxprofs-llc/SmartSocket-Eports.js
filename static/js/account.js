@@ -1,6 +1,6 @@
 Chart.defaults.Line.animation = false;
 Chart.defaults.Line.bezierCurve = false;
-Chart.defaults.Line.pointDotRadius = 7;
+Chart.defaults.Line.pointDotRadius = 4.9;
 Chart.defaults.Line.responsive = true;
 
 (function (settings) {
@@ -310,13 +310,13 @@ Chart.defaults.Line.responsive = true;
     },
     "theme": {
         "strokeColors": [
-            "rgba(210, 70, 70, .35)",
-            "rgba(210, 140, 70, .35)",
-            "rgba(210, 210, 70, .35)",
-            "rgba(70, 140, 70, .35)",
-            "rgba(70, 70, 140, .35)",
-            "rgba(140, 70, 140, .35)",
-            "rgba(210, 175, 189, .35)"
+            "rgba(210, 70, 70, .49)",
+            "rgba(210, 140, 70, .49)",
+            "rgba(210, 210, 70, .49)",
+            "rgba(70, 140, 70, .49)",
+            "rgba(70, 70, 140, .49)",
+            "rgba(140, 70, 140, .49)",
+            "rgba(210, 175, 189, .49)"
         ],
         "pointColors": [
             "rgb(245, 117, 117)",
