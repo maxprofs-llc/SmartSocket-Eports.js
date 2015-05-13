@@ -113,7 +113,7 @@ SocketStorage.prototype.dropDatabase = function (callback) {
 
 SocketStorage.prototype.ensureNumericRecord = function (record) {
     if (!record.timestamp) {
-        record.timestamp = new Date().getTime() / 1000;
+        record.timestamp = Math.round(new Date().getTime() / 1000);
     } else {
         record.timestamp = Number(record.timestamp);
     }

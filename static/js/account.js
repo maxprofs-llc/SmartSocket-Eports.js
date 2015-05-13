@@ -1,3 +1,8 @@
+Chart.defaults.Line.animation = false;
+Chart.defaults.Line.bezierCurve = false;
+Chart.defaults.Line.pointDotRadius = 7;
+Chart.defaults.Line.responsive = true;
+
 (function (settings) {
     var numSockets = settings.numSockets,
         periodConversions = settings.periodConversions,
@@ -8,7 +13,7 @@
      * 
      */
     function obtainTimestamp() {
-        return new Date().getTime() / 1000;
+        return new Date().getTime() / 1000 - 10;
     }
 
     /**
@@ -237,7 +242,7 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
-        refreshRate = periodConversions[period] * amount * 1000;
+        refreshRate = periodConversions[period] /* * amount */ * 1000;
         clearTimeout(pingTimeout);
         setTimeout(startPingingData, refreshRate);
 
@@ -287,18 +292,15 @@
     var elements = document.querySelectorAll("#chooser input, #chooser select"),
         i;
 
-    //for (i = 0; i < elements.length; i += 1) {
-        //elements[i].onchange = conglomerateData;
-    //}
+    for (i = 0; i < elements.length; i += 1) {
+        elements[i].onchange = conglomerateData;
+    }
 
-    //document.getElementById("refresher").onclick = conglomerateData;
-
-    Chart.defaults.global.animation = false;
-    Chart.defaults.global.responsive = true;
+    document.getElementById("refresher").onclick = conglomerateData;
 
     startPingingData();
 })({
-    "numSockets": 7,
+    "numSockets": 6,
     "periodConversions": {
         "seconds": 1,
         "minutes": 60,
@@ -307,13 +309,13 @@
     },
     "theme": {
         "strokeColors": [
-            "rgb(210, 70, 70)",
-            "rgb(210, 140, 70)",
-            "rgb(210, 210, 70)",
-            "rgb(70, 140, 70)",
-            "rgb(70, 70, 140)",
-            "rgb(140, 70, 140)",
-            "rgb(210, 175, 189)"
+            "rgba(210, 70, 70, .35)",
+            "rgba(210, 140, 70, .35)",
+            "rgba(210, 210, 70, .35)",
+            "rgba(70, 140, 70, .35)",
+            "rgba(70, 70, 140, .35)",
+            "rgba(140, 70, 140, .35)",
+            "rgba(210, 175, 189, .35)"
         ],
         "pointColors": [
             "rgb(245, 117, 117)",
