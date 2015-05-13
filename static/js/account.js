@@ -7,7 +7,8 @@ Chart.defaults.Line.responsive = true;
     var numSockets = settings.numSockets,
         periodConversions = settings.periodConversions,
         theme = settings.theme,
-        refreshRate, pingTimeout;
+        refreshRate = settings.refreshRate,
+        pingTimeout;
 
     /**
      * 
@@ -242,7 +243,6 @@ Chart.defaults.Line.responsive = true;
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
-        refreshRate = periodConversions[period] /* * amount */ * 1000;
         clearTimeout(pingTimeout);
         setTimeout(startPingingData, refreshRate);
 
@@ -301,6 +301,7 @@ Chart.defaults.Line.responsive = true;
     startPingingData();
 })({
     "numSockets": 6,
+    "refreshRate": 1170,
     "periodConversions": {
         "seconds": 1,
         "minutes": 60,
