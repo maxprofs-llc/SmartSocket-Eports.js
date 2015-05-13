@@ -112,15 +112,29 @@ SocketStorage.prototype.dropDatabase = function (callback) {
 };
 
 SocketStorage.prototype.ensureNumericRecord = function (record) {
-    if (!record.timestamp) {
+    if (!record.hasOwnProperty("timestamp")) {
         record.timestamp = Math.round(new Date().getTime() / 1000);
     } else {
         record.timestamp = Number(record.timestamp);
     }
 
+    if (record.hasOwnProperty("volts")) {
+        record.pressure = this.convertVoltsToPascals(record.volts);
+    } else {
+        record.pressure = Number(record.pressure);
+    }
+
+
     record.user = Number(record.user);
     record.socket = Number(record.socket);
-    record.pressure = Number(record.pressure);
+};
+
+SocketStorage.prototype.convertVoltsToPascals = function (volts) {
+    return (190.62 * this.log10(x) - 294.79) / (Math.PI * 0.00009025);
+};
+
+SocketStorage.prototype.log10 = function (value) {
+    return Math.log(value) / Math.LN10;
 }
 
 SocketStorage.prototype.ensureNumericFilters = function (filters) {
