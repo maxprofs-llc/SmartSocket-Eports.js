@@ -1,10 +1,13 @@
 // Fix for Heroku and __dirname 
 // http://stackoverflow.com/questions/17212624/deploy-nodejs-on-heroku-fails-serving-static-files-located-in-subfolders
-process.env.PWD = process.cwd()
+process.env.PWD = process.cwd();
+
+// 
 
 var express = require("express"),
     mongodb = require("mongodb"),
     bodyParser = require("body-parser"),
+    querystring = require("querystring"),
     storage = new (require("./storage.js").SocketStorage)({
         "verbose": true
     }),
@@ -20,25 +23,34 @@ var express = require("express"),
 
 app.set("port", (process.env.PORT || 5000));
 app.use(express.static(process.env.PWD + "/static"));
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+app.use(bodyParser.text());
 
 // POST /: add the record in storage
 app.post("/api", function (request, response) {
     if (!storage.initialized) {
+        response.writeHead(503);
         response.end("Try again later!");
     }
 
-    storage.addRecord(request.body, function (error) {
-        if (error) {
-            response.end("There was an error.");
-            storage.log(error);
-        } else {
-            response.end("ACK");
-        }
+    var received = "",
+        pair, i;
+
+    request.on("data", function (chunk) {
+        received += chunk.toString();
+    });
+
+    request.on("end", function () {
+        storage.addRecord(querystring.parse(received), function (error) {
+            if (error) {
+                response.writeHead(500);
+                response.end("There was an error.");
+                storage.log(error);
+            } else {
+                response.writeHead(200);
+                response.end("ACK");
+                response.end("ACK");
+            }
+        });
     });
 });
 
@@ -48,10 +60,11 @@ app.post("/api", function (request, response) {
 // E.x. /api/socket/gt/1/user/eq/5: where socket is > 1 and user = 5
 app.get("/api*", function (request, response) {
     if (!storage.initialized) {
+        response.writeHead(503);
         response.end("Try again later!");
         return;
     }
-    
+
     var queryRaw = request.params[0],
         querySplit = queryRaw.split("/"),
         filters = {},
