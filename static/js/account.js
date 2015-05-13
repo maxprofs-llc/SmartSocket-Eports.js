@@ -9,6 +9,7 @@ Chart.defaults.Line.showTooltips = false;
         periodConversions = settings.periodConversions,
         theme = settings.theme,
         refreshRate = settings.refreshRate,
+        sensorLabels = settings.sensorLabels,
         pingTimeout;
 
     /**
@@ -262,7 +263,7 @@ Chart.defaults.Line.showTooltips = false;
                     "labels": populateLabels(labels, amount, period),
                     "datasets": records.map(function (record, i) {
                         return {
-                            "label": "Socket " + i,
+                            "label": "Sensor " + sensorLabels[i],
                             "fillColor": "rgba(0,0,0,0)",
                             "strokeColor": theme.strokeColors[i],
                             "pointColor": theme.pointColors[i],
@@ -307,6 +308,7 @@ Chart.defaults.Line.showTooltips = false;
         "hours": 3600,
         "days": 86400
     },
+    "sensorLabels": ["A", "B", "C", "D", "E", "F", "G"],
     "theme": {
         "strokeColors": [
             "rgba(210, 70, 70, .49)",
@@ -318,13 +320,13 @@ Chart.defaults.Line.showTooltips = false;
             "rgba(210, 175, 189, .49)"
         ],
         "pointColors": [
-            "rgb(245, 117, 117)",
-            "rgb(245, 175, 117)",
-            "rgb(245, 245, 117)",
-            "rgb(117, 175, 117)",
-            "rgb(117, 117, 175)",
-            "rgb(175, 117, 175)",
-            "rgb(245, 210, 224)"
+            "rgb(255, 140, 140)",
+            "rgb(255, 210, 140)",
+            "rgb(255, 255, 140)",
+            "rgb(140, 210, 140)",
+            "rgb(140, 140, 210)",
+            "rgb(210, 140, 210)",
+            "rgb(255, 224, 245)"
         ]
     }
 });
