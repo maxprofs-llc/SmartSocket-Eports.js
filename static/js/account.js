@@ -2,6 +2,7 @@ Chart.defaults.Line.animation = false;
 Chart.defaults.Line.bezierCurve = false;
 Chart.defaults.Line.pointDotRadius = 4.9;
 Chart.defaults.Line.responsive = true;
+Chart.defaults.Line.showTooltips = false;
 
 (function (settings) {
     var numSockets = settings.numSockets,
