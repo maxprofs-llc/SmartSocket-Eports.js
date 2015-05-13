@@ -10,6 +10,7 @@ Chart.defaults.Line.showTooltips = false;
         theme = settings.theme,
         refreshRate = settings.refreshRate,
         sensorLabels = settings.sensorLabels,
+        units = settings.units,
         pingTimeout;
 
     /**
@@ -35,7 +36,7 @@ Chart.defaults.Line.showTooltips = false;
             data = datasets[i].data;
 
             info.className = "info";
-            info.innerHTML = "Currently " + (Math.round(data[data.length - 1] * 10) / 10) + " Newtons.";
+            info.innerHTML = "Currently " + (Math.round(data[data.length - 1] * 10) / 10) + " " + units + ".";
 
             legendChildren[i].appendChild(info);
         }
@@ -302,6 +303,7 @@ Chart.defaults.Line.showTooltips = false;
 })({
     "numSockets": 6,
     "refreshRate": 1170,
+    "units": "volts",
     "periodConversions": {
         "seconds": 1,
         "minutes": 60,

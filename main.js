@@ -28,6 +28,7 @@ app.post("/api", function (request, response) {
     if (!storage.initialized) {
         response.writeHead(503);
         response.end("Try again later!");
+        return;
     }
 
     var received = "",
@@ -45,7 +46,6 @@ app.post("/api", function (request, response) {
                 storage.log(error);
             } else {
                 response.writeHead(200);
-                response.end("ACK");
                 response.end("ACK");
             }
         });

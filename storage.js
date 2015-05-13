@@ -98,8 +98,9 @@ SocketStorage.prototype.addRecord = function (record, callback) {
 
         scope.log("Inserting", record);
         collection.insert(record);
+
+        callback();
     });
-    callback();
 };
 
 SocketStorage.prototype.dropDatabase = function (callback) {
@@ -119,18 +120,19 @@ SocketStorage.prototype.ensureNumericRecord = function (record) {
     }
 
     if (record.hasOwnProperty("volts")) {
-        record.pressure = this.convertVoltsToPascals(record.volts);
+        // record.pressure = this.convertVoltsToPascals(record.volts);
+        record.pressure = Number(record.volts);
+        delete record.volts;
     } else {
         record.pressure = Number(record.pressure);
     }
-
 
     record.user = Number(record.user);
     record.socket = Number(record.socket);
 };
 
 SocketStorage.prototype.convertVoltsToPascals = function (volts) {
-    return (190.62 * this.log10(x) - 294.79) / (Math.PI * 0.00009025);
+    return (190.62 * this.log10(Math.min(1, volts)) - 294.79) / (Math.PI * 0.00009025);
 };
 
 SocketStorage.prototype.log10 = function (value) {
