@@ -120,8 +120,9 @@ SocketStorage.prototype.ensureNumericRecord = function (record) {
     }
 
     if (record.hasOwnProperty("volts")) {
-        // record.pressure = this.convertVoltsToPascals(record.volts);
-        record.pressure = Number(record.volts);
+        // record.pressure = Number(record.volts);
+        // Pressure is volts converted to pascals, then divided by 1k for KiloPascals
+        record.pressure = this.convertVoltsToPascals(record.volts) / 10000;
         delete record.volts;
     } else {
         record.pressure = Number(record.pressure);
@@ -132,7 +133,7 @@ SocketStorage.prototype.ensureNumericRecord = function (record) {
 };
 
 SocketStorage.prototype.convertVoltsToPascals = function (volts) {
-    return (190.62 * this.log10(Math.min(1, volts)) - 294.79) / (Math.PI * 0.00009025);
+    return (190.62 * this.log10(Math.max(1, volts)) - 294.79) / (Math.PI * 0.00009025);
 };
 
 SocketStorage.prototype.log10 = function (value) {
