@@ -2,8 +2,6 @@
 // http://stackoverflow.com/questions/17212624/deploy-nodejs-on-heroku-fails-serving-static-files-located-in-subfolders
 process.env.PWD = process.cwd();
 
-// 
-
 var express = require("express"),
     mongodb = require("mongodb"),
     bodyParser = require("body-parser"),

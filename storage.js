@@ -112,7 +112,12 @@ SocketStorage.prototype.dropDatabase = function (callback) {
 };
 
 SocketStorage.prototype.ensureNumericRecord = function (record) {
-    record.timestamp = Number(record.timestamp);
+    if (!record.timestamp) {
+        record.timestamp = new Date().getTime() / 1000;
+    } else {
+        record.timestamp = Number(record.timestamp);
+    }
+
     record.user = Number(record.user);
     record.socket = Number(record.socket);
     record.pressure = Number(record.pressure);

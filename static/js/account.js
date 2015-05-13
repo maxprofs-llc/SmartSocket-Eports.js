@@ -8,7 +8,7 @@
      * 
      */
     function obtainTimestamp() {
-        return new Date().getTime();
+        return new Date().getTime() / 1000;
     }
 
     /**
@@ -124,9 +124,19 @@
             timeMinimum = obtainTimestamp() - periodMilliseconds;
 
         requestAllRecords(timeMinimum, function (requests) {
-            callback(requests.map(function (request) {
-                return JSON.parse(request.ajax.responseText);
-            }));
+            callback(
+                requests
+                    .map(function (request) {
+                        try {
+                            return JSON.parse(request.ajax.responseText);
+                        } catch (error) {
+                            return undefined;
+                        }
+                    })
+                    .filter(function (dataset) {
+                        return dataset;
+                    })
+            );
         });
     }
 
@@ -227,7 +237,7 @@
                 "1 " + period.substr(0, period.length - 1) + " ago"
             ];
 
-        refreshRate = periodConversions[period];
+        refreshRate = periodConversions[period] * amount * 1000;
         clearTimeout(pingTimeout);
         setTimeout(startPingingData, refreshRate);
 
@@ -277,11 +287,11 @@
     var elements = document.querySelectorAll("#chooser input, #chooser select"),
         i;
 
-    for (i = 0; i < elements.length; i += 1) {
-        elements[i].onchange = conglomerateData;
-    }
+    //for (i = 0; i < elements.length; i += 1) {
+        //elements[i].onchange = conglomerateData;
+    //}
 
-    document.getElementById("refresher").onclick = conglomerateData;
+    //document.getElementById("refresher").onclick = conglomerateData;
 
     Chart.defaults.global.animation = false;
     Chart.defaults.global.responsive = true;
@@ -290,10 +300,10 @@
 })({
     "numSockets": 7,
     "periodConversions": {
-        "seconds": 1000,
-        "minutes": 60000,
-        "hours": 3600000,
-        "days": 86400000
+        "seconds": 1,
+        "minutes": 60,
+        "hours": 3600,
+        "days": 86400
     },
     "theme": {
         "strokeColors": [
