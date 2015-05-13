@@ -85,17 +85,6 @@
             text-align: center;
         }
 
-    #chooser #refresher {
-        margin-left: 14px;
-        background: white;
-        border-radius: 7px;
-        border: 1px solid #00ff77;
-        color: #aaa;
-        font-style: italic;
-        font-size: 100%;
-        cursor: pointer;
-    }
-
 
 /* Legend */
 

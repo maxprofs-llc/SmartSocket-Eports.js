@@ -297,8 +297,6 @@ Chart.defaults.Line.showTooltips = false;
         elements[i].onchange = conglomerateData;
     }
 
-    document.getElementById("refresher").onclick = conglomerateData;
-
     startPingingData();
 })({
     "numSockets": 6,
