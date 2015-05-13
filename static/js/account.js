@@ -303,7 +303,7 @@ Chart.defaults.Line.showTooltips = false;
 })({
     "numSockets": 6,
     "refreshRate": 1170,
-    "units": "KiloPascals",
+    "units": "kilopascals",
     "periodConversions": {
         "seconds": 1,
         "minutes": 60,
