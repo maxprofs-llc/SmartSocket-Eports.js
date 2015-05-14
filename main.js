@@ -23,8 +23,8 @@ app.set("port", (process.env.PORT || 5000));
 app.use(express.static(process.env.PWD + "/static"));
 app.use(bodyParser.text());
 
-// POST /: add the record in storage
-app.post("/api", function (request, response) {
+// POST /api/single: add a single record to storage
+app.post("/api/single", function (request, response) {
     if (!storage.initialized) {
         response.writeHead(503);
         response.end("Try again later!");
@@ -49,6 +49,54 @@ app.post("/api", function (request, response) {
                 response.end("ACK");
             }
         });
+    });
+});
+
+// POST /api/multi: add multiple records to storage
+app.post("/api/multi", function (request, response) {
+    if (!storage.initialized) {
+        response.writeHead(503);
+        response.end("Try again later!");
+        return;
+    }
+
+    var received = "",
+        pair, i;
+
+    request.on("data", function (chunk) {
+        received += chunk.toString();
+    });
+
+    request.on("end", function () {
+        var request = querystring.parse(received),
+            finished = 0,
+            started = 0;
+
+        request.volts = request.volts.split(",")
+            .filter(function (volts) {
+                return volts;
+            })
+            .map(function (volts) {
+                return Number(volts);
+            })
+            .forEach(function (volts, i) {
+                var record = {
+                    "volts": volts,
+                    "user": request.user,
+                    "socket": i
+                };
+
+                started += 1;
+
+                storage.addRecord(record, function (error) {
+                    finished += 1;
+
+                    if (finished === started) {
+                        response.writeHead(200);
+                        response.end("ACK");
+                    }
+                });
+            });
     });
 });
 
