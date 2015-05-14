@@ -44,9 +44,9 @@ public class PostThread implements Runnable {
              this.post.addData("user", "1");
              this.post.addData("volts", argument);
              this.post.send();
-         }
          
-         println("Sent #" + Integer.toString(this.numSent / this.modulo) + ": " + argument);
+             println("Sent #" + Integer.toString(this.numSent / this.modulo) + ": " + argument);
+         }
          
          // Once the request is sent, setting volts to null will allow getData to trigger
          this.volts = null;
