@@ -2,6 +2,7 @@ public class PostThread implements Runnable {
      public PostThread() {
           this.volts = null;
           this.numSent = 0;
+          this.modulo = 100;
           
           this.post = new PostRequest("http://sockettoyou.herokuapp.com/api/multi");
      }
@@ -37,12 +38,15 @@ public class PostThread implements Runnable {
              argument += Float.toString(this.volts[i]) + ",";
          }
          
-         this.post.addData("user", "1");
-         this.post.addData("volts", argument);
-         this.post.send();
-         
+         // Only send every very measurement, since there are just so darn many.
          this.numSent += 1;
-         println("Sent #" + Integer.toString(this.numSent) + ": " + argument);
+         if (this.numSent % this.modulo == 0) {
+             this.post.addData("user", "1");
+             this.post.addData("volts", argument);
+             this.post.send();
+         }
+         
+         println("Sent #" + Integer.toString(this.numSent / this.modulo) + ": " + argument);
          
          // Once the request is sent, setting volts to null will allow getData to trigger
          this.volts = null;
@@ -54,6 +58,9 @@ public class PostThread implements Runnable {
      
      // A counter of how many posts have been sent to the server.
      private int numSent;
+     
+     // How often a measurement should actually be sent out (to reduce spam).
+     private int modulo;
      
      // The driving object used to post requests. Each sendData call, it gets the user
      // and voltage, and posts them.
