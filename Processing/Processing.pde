@@ -2,9 +2,10 @@ public class PostThread implements Runnable {
      public PostThread() {
           this.volts = null;
           this.numSent = 0;
-          this.modulo = 100;
+          this.minimumTimeDifference = 117;
           
           this.post = new PostRequest("http://sockettoyou.herokuapp.com/api/multi");
+          this.timestamp = System.currentTimeMillis();
      }
   
      public void run() {
@@ -13,14 +14,20 @@ public class PostThread implements Runnable {
      
      /**
       * Tries to update the newest value of volts and send a POST request with the updated data.
-      * This won't happen if the thread is already sending data, as that would spam the server
-      * and slow the thread down. 
+      * This won't happen if the thread is already sending data or the current timestamp is the
+      * same as the last one, as that would spam the server and slow the thread down. 
       */
      public void getData(float[] volts) {
          if (this.volts != null) {
              return;
          }
          
+         this.timestampNext = System.currentTimeMillis();
+         if (this.timestampNext - this.timestamp < this.minimumTimeDifference) {
+           return;
+         }
+         
+         this.timestamp = this.timestampNext;
          this.volts = volts;
          this.sendData();
      }
@@ -38,15 +45,12 @@ public class PostThread implements Runnable {
              argument += Float.toString(this.volts[i]) + ",";
          }
          
-         // Only send every very measurement, since there are just so darn many.
          this.numSent += 1;
-         if (this.numSent % this.modulo == 0) {
-             this.post.addData("user", "1");
-             this.post.addData("volts", argument);
-             this.post.send();
-         
-             println("Sent #" + Integer.toString(this.numSent / this.modulo) + ": " + argument);
-         }
+         this.post.addData("user", "1");
+         this.post.addData("volts", argument);
+         this.post.send();
+       
+         println("Sent #" + Integer.toString(this.numSent) + ": " + argument);
          
          // Once the request is sent, setting volts to null will allow getData to trigger
          this.volts = null;
@@ -59,12 +63,19 @@ public class PostThread implements Runnable {
      // A counter of how many posts have been sent to the server.
      private int numSent;
      
-     // How often a measurement should actually be sent out (to reduce spam).
-     private int modulo;
+     // The minimum time separation allowed begin post requests, in milliseconds.
+     private int minimumTimeDifference;
      
      // The driving object used to post requests. Each sendData call, it gets the user
      // and voltage, and posts them.
      private PostRequest post;
+     
+     // Time of the most recent data posting, used to ensure some time between them.
+     private long timestamp;
+     
+     // Scratch variable for checking the timestamp of a new data posting (to ensure
+     // it's not too similar to the previous one).
+     private long timestampNext;
 }
 
 // Threads to continuously post new data to the server
