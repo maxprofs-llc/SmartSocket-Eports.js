@@ -64,19 +64,30 @@ Chart.defaults.Line.showTooltips = false;
     /**
      * 
      */
-    function requestSocketRecords(socket, timeMinimum, callback) {
-        var ajax = new XMLHttpRequest(),
-            status = {
-                "ajax": ajax,
-                "completed": false
-            };
+    function splitSocketRecords(allRecords) {
+        var output = new Array(numSockets),
+            i;
+
+        for (i = 0; i < numSockets; i += 1) {
+            output[i] = [];
+        }
+
+        for (i = 0; i < allRecords.length; i += 1) {
+            output[allRecords[i].socket].push(allRecords[i]);
+        }
+
+        return output;
+    }
+
+    /**
+     * 
+     */
+    function requestSocketRecords(timeMinimum, callback) {
+        var ajax = new XMLHttpRequest();
 
         ajax.open("GET", generateQuery({
             "user": [
                 ["eq", 1]
-            ],
-            "socket": [
-                ["eq", socket]
             ],
             "timestamp": [
                 ["gt", timeMinimum]
@@ -89,34 +100,10 @@ Chart.defaults.Line.showTooltips = false;
                 return;
             }
 
-            status.completed = true;
-
             if (callback) {
-                callback(status);
+                callback(splitSocketRecords(JSON.parse(ajax.responseText)));
             }
         }
-
-        return status;
-    }
-
-    /**
-     * 
-     */
-    function requestAllRecords(timeMinimum, callback) {
-        var requests = new Array(),
-            numCompleted = 0,
-            i;
-
-        for (i = 0; i < numSockets; i += 1) {
-            requests[i] = requestSocketRecords(i, timeMinimum, function () {
-                numCompleted += 1;
-                if (numCompleted === numSockets && callback) {
-                    callback(requests);
-                }
-            });
-        }
-
-        return requests;
     }
 
     /**
@@ -132,20 +119,8 @@ Chart.defaults.Line.showTooltips = false;
             periodMilliseconds = periodConversions[periodString] * amount,
             timeMinimum = obtainTimestamp() - periodMilliseconds;
 
-        requestAllRecords(timeMinimum, function (requests) {
-            callback(
-                requests
-                    .map(function (request) {
-                        try {
-                            return JSON.parse(request.ajax.responseText);
-                        } catch (error) {
-                            return undefined;
-                        }
-                    })
-                    .filter(function (dataset) {
-                        return dataset;
-                    })
-            );
+        requestSocketRecords(timeMinimum, function (records) {
+            callback(records);
         });
     }
 
