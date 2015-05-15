@@ -23,8 +23,16 @@ app.set("port", (process.env.PORT || 5000));
 app.use(express.static(process.env.PWD + "/static"));
 app.use(bodyParser.text());
 
-app.post("/clear", function () {
-    storage.clear();
+app.get("/clear", function (request, response) {
+    storage.dropDatabase(function (error) {
+        if (error) {
+            response.writeHead(503);
+            response.end(error.toString());
+        } else {
+            response.writeHead(200);
+            response.end("ACK");
+        }
+    });
 });
 
 // POST /api/single: add a single record to storage
